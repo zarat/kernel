@@ -1,3 +1,3 @@
 # kernel
 
-apt install gcc gcc-multilib
+apt install gcc gcc-multilib qemu
