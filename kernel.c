@@ -299,8 +299,8 @@ void kernel_entry()
 
   init_vga(WHITE, BLUE);
   print_string("Kernel-OS v1.0");
+  print_new_line();
   print_string("(C) Manuel Zarat");
-  //print_new_line();
   print_new_line();
   print_string("Type \"HELP\" for help");
   print_new_line();
