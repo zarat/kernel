@@ -4,4 +4,4 @@ apt install gcc gcc-multilib qemu
 
 oder
 
-apt install gcc gcc-multilib qemu-system
+apt install gcc gcc-multilib qemu-system xorriso
