@@ -306,6 +306,10 @@ void kernel_entry()
 {
 
   init_vga(WHITE, BLUE);
+  print_string("Welcome to Kernel-OS by Manuel Zarat");
+  print_new_line();
+  print_string("Type \"HELP\" for help");
+  print_string("> ");
   loop();
 
 	/*vga_buffer = (uint16 *)VGA_ADDRESS;
