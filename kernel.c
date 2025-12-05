@@ -280,7 +280,7 @@ void loop()
 
       		ch = get_ascii_char(keycode);
 
-		if( ch == KEY_SPACE || (ch >= 65 && ch <= 90) || (ch >= 48 && ch <= 57) ) {
+		if( ch == KEY_SPACE || ch == KEY_DOT || (ch >= 65 && ch <= 90) || (ch >= 48 && ch <= 57) ) {
       			str[strc] = ch;
       			strc++;
       			print_char(ch);
