@@ -7,9 +7,13 @@
 #include "string.h"
 #include "linux/time.h"
 
-// --- keyboard i/o ports (PS/2 controller) ---
+// Keyboard timing
 #define KBD_DATA   0x60
 #define KBD_STATUS 0x64
+
+// cursor
+#define VGA_CRTC_INDEX 0x3D4
+#define VGA_CRTC_DATA  0x3D5
 
 uint32 vga_index;
 static uint32 next_line_index = 1;
@@ -83,6 +87,13 @@ int get_keycode_once(uint8 *out_scancode)
   return 1;
 }
 
+static inline void vga_set_cursor(uint16 pos) {
+    outb(VGA_CRTC_INDEX, 0x0F);
+    outb(VGA_CRTC_DATA,  (uint8)(pos & 0xFF));
+    outb(VGA_CRTC_INDEX, 0x0E);
+    outb(VGA_CRTC_DATA,  (uint8)((pos >> 8) & 0xFF));
+}
+
 /*
 this is same as we did in our assembly code for vga_print_char
 
@@ -142,12 +153,14 @@ void print_new_line()
   	}
   	vga_index = 80 * next_line_index;
   	next_line_index++;
+	vga_set_cursor((uint16)vga_index);
 }
 
 void print_char(char ch)
 {
 	vga_buffer[vga_index] = vga_entry(ch, g_fore_color, g_back_color);
 	vga_index++;
+	vga_set_cursor((uint16)vga_index);
 }
 
 void print_string(char *str)
@@ -234,11 +247,22 @@ void loop()
 
 	else if(keycode == KEY_BACKSPACE) {
 
+		/*
 		if(vga_index > 80*(next_line_index-1) + 2 ) {
 			vga_index--;
 			strc--;
 			vga_buffer[vga_index] = vga_entry(' ', WHITE, BLUE);
 		}
+		*/
+
+		if (strc > 0 && vga_index > 80*(next_line_index-1) + 2) {
+        	vga_index--;
+        	strc--;
+
+        	str[strc] = 0; 
+        	vga_buffer[vga_index] = vga_entry(' ', WHITE, BLUE);
+        	vga_set_cursor((uint16)vga_index);
+    	}
 
 	}
 
