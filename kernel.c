@@ -7,6 +7,10 @@
 #include "string.h"
 #include "linux/time.h"
 
+// --- keyboard i/o ports (PS/2 controller) ---
+#define KBD_DATA   0x60
+#define KBD_STATUS 0x64
+
 uint32 vga_index;
 static uint32 next_line_index = 1;
 uint8 g_fore_color = WHITE, g_back_color = BLUE;
@@ -21,9 +25,62 @@ uint8 inb(uint16 port)
   return ret;
 }
 
+/*
 void outb(uint16 port, uint8 data)
 {
   asm volatile("outb %0, %1" : "=a"(data) : "d"(port));
+}
+*/
+
+void outb(uint16 port, uint8 data)
+{
+  asm volatile("outb %0, %1" : : "a"(data), "d"(port));
+}
+
+static inline uint8 kbd_has_data(void)
+{
+  return (inb(KBD_STATUS) & 0x01); // OBF: Output Buffer Full
+}
+
+static inline uint8 kbd_read_data(void)
+{
+  return inb(KBD_DATA);
+}
+
+// --- repeat filter state ---
+static uint8 key_down[128] = {0};
+static uint8 e0_prefix = 0;
+
+// returns 1 if a NEW key press (make) should be processed, else 0
+int get_keycode_once(uint8 *out_scancode)
+{
+  if (!kbd_has_data()) return 0;
+
+  uint8 sc = kbd_read_data();
+
+  // Extended prefix
+  if (sc == 0xE0) { e0_prefix = 1; return 0; }
+
+  // Break (release)
+  if (sc & 0x80) {
+    uint8 make = sc & 0x7F;
+    if (!e0_prefix && make < 128) key_down[make] = 0;
+    e0_prefix = 0;
+    return 0;
+  }
+
+  // Make (press) - suppress repeats
+  if (!e0_prefix && sc < 128) {
+    if (key_down[sc]) {
+      // key is being held down -> this is typematic repeat -> ignore
+      return 0;
+    }
+    key_down[sc] = 1;
+  }
+
+  e0_prefix = 0;
+  *out_scancode = sc;
+  return 1;
 }
 
 /*
@@ -144,11 +201,15 @@ void loop()
 {
 
   char ch = 0;
-  char keycode = 0;
+  uint8 keycode;
 
   do {
 
- 	keycode = get_input_keycode();
+ 	//keycode = get_input_keycode();
+	if (!get_keycode_once(&keycode)) {
+		sleep(0x0000FFFF);
+		continue;
+	}
 
     	if(keycode == KEY_ENTER){
 
