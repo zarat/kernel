@@ -240,10 +240,9 @@ void loop()
 			print_new_line();
 			print_string("Available commands:");
 			print_new_line();
-			print_string("help - Prints this help");
+			print_string("    help - Prints this help");
 			print_new_line();
-			print_string("time - Display seconds since boot");
-			print_new_line();
+			print_string("    time - Display seconds since boot");
 		}
 
 		print_new_line();
