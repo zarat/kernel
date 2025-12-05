@@ -236,6 +236,16 @@ void loop()
 			print_string("no time available");
 		}
 
+		if(strcmp(str, "HELP") == 0) {
+			print_new_line();
+			print_string("Available commands:");
+			print_new_line();
+			print_string("help - Prints this help");
+			print_new_line();
+			print_string("time - Display seconds since boot");
+			print_new_line();
+		}
+
 		print_new_line();
 		print_string("> ");
 
