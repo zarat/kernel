@@ -308,6 +308,7 @@ void kernel_entry()
   print_string("Welcome to Kernel-OS by Manuel Zarat");
   print_new_line();
   print_string("Type \"HELP\" for help");
+  print_new_line();
   print_string("> ");
   loop();
 
