@@ -245,6 +245,10 @@ void loop()
 			print_string("    help - Prints this help");
 		}
 
+		if(strcmp(str, "REBOOT") == 0) {
+			do_reboot();
+		}
+
 		print_new_line();
 		print_string("> ");
 
