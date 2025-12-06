@@ -2,11 +2,6 @@
 #include "utils.h"
 #include "char.h"
 
-#include "stdio.h"
-#include "math.h"
-#include "string.h"
-#include "linux/time.h"
-
 // Keyboard timing
 #define KBD_DATA   0x60
 #define KBD_STATUS 0x64
