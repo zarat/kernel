@@ -41,6 +41,13 @@ void outb(uint16 port, uint8 data)
   asm volatile("outb %0, %1" : : "a"(data), "d"(port));
 }
 
+void do_reboot(void) {
+    // try 8042 reboot pulse
+    outb(0x64, 0xFE);
+    // fallback: halt
+    for (;;) asm volatile("hlt");
+}
+
 static inline uint8 kbd_has_data(void)
 {
   return (inb(KBD_STATUS) & 0x01); // OBF: Output Buffer Full
