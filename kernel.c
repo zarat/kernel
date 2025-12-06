@@ -243,6 +243,8 @@ void loop()
 			print_string("Available commands:");
 			print_new_line();
 			print_string("    help - Prints this help");
+			print_new_line();
+			print_string("    reboot - Reboot the system");
 		}
 
 		if(strcmp(str, "REBOOT") == 0) {
